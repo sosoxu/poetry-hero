@@ -400,6 +400,58 @@
             :transform="`rotate(${i * 30} 200 86)`" />
         </g>
       </g>
+
+      <!-- 蝴蝶 -->
+      <g v-if="has('butterfly')" class="prop butterfly-prop">
+        <g class="pr-butterfly bf1">
+          <ellipse cx="0" cy="0" rx="3" ry="5" class="pr-bf-wing" />
+          <path d="M0 0 q-11 -13 -16 -2 q3 11 16 2 q11 -13 16 -2 q-3 11 -16 2" class="pr-bf-wing w2" />
+        </g>
+        <g class="pr-butterfly bf2">
+          <ellipse cx="0" cy="0" rx="2.6" ry="4.2" class="pr-bf-wing" />
+          <path d="M0 0 q-9 -11 -13 -2 q2 9 13 2 q9 -11 13 -2 q-2 9 -13 2" class="pr-bf-wing w2" />
+        </g>
+      </g>
+
+      <!-- 花朵 -->
+      <g v-if="has('flower')">
+        <g v-for="(f, i) in flowerDots" :key="i" :transform="`translate(${f.x} ${f.y})`" class="pr-flower-g">
+          <circle v-for="k in 5" :key="k" :cx="Math.cos(k * 1.256) * 4.6" :cy="Math.sin(k * 1.256) * 4.6" r="2.8" class="pr-fpetal" />
+          <circle cx="0" cy="0" r="2" class="pr-fheart" />
+        </g>
+      </g>
+
+      <!-- 黄莺 -->
+      <g v-if="has('bird')" class="prop bird-prop">
+        <g class="pr-bird b1">
+          <ellipse cx="0" cy="0" rx="7" ry="5.5" class="pr-bird-body" />
+          <circle cx="6" cy="-4" r="3.6" class="pr-bird-body" />
+          <path d="M9 -4 l4 1.4 l-4 1.4z" class="pr-bird-beak" />
+          <path d="M-6 -2 q-6 -6 -10 -4" class="pr-bird-tail" />
+          <circle cx="7" cy="-4.6" r="1" class="pr-eye" />
+        </g>
+        <g class="pr-bird b2">
+          <ellipse cx="0" cy="0" rx="6" ry="4.6" class="pr-bird-body" />
+          <circle cx="5" cy="-3.4" r="3" class="pr-bird-body" />
+          <path d="M7.5 -3.4 l3.4 1.2 l-3.4 1.2z" class="pr-bird-beak" />
+        </g>
+      </g>
+
+      <!-- 柳枝春雨 -->
+      <g v-if="has('willowrain')">
+        <g v-for="(w, i) in willowBranches" :key="i" :transform="`translate(${w.x} ${w.y})`" class="pr-wbranch">
+          <path d="M0 0 q-4 18 -12 30" class="pr-wstem" />
+          <ellipse v-for="k in 4" :key="k" :cx="-3 - k * 2.6" :cy="k * 8" rx="2" ry="3.6" class="pr-wleaf" :transform="`rotate(-24 ${-3 - k * 2.6} ${k * 8})`" />
+        </g>
+        <line v-for="(r, i) in rainXs.slice(0, 8)" :key="'wr' + i" :x1="r" :y1="40 + (i % 3) * 12" :x2="r - 3" :y2="54 + (i % 3) * 12" class="raindrop" />
+      </g>
+
+      <!-- 浪花 -->
+      <g v-if="has('wave')">
+        <path d="M30 190 q20 -14 40 0 q20 12 40 0" class="pr-wavebig" />
+        <path d="M150 198 q18 -12 36 0 q18 10 36 0" class="pr-wavebig w2" />
+        <path d="M270 192 q16 -12 34 0" class="pr-wavebig w3" />
+      </g>
     </svg>
   </div>
 </template>
@@ -448,6 +500,10 @@ const petalDots = Array.from({ length: 8 }, (_, i) => ({
 const musicDots = Array.from({ length: 4 }, (_, i) => ({
   x: 60 + i * 80, y: 80 + (i % 2) * 26, d: i * 1.1, dur: 5 + i
 }));
+const flowerDots = [
+  { x: 46, y: 186 }, { x: 66, y: 200 }, { x: 330, y: 190 }, { x: 352, y: 178 }, { x: 210, y: 204 }
+];
+const willowBranches = [ { x: 40, y: 120 }, { x: 60, y: 112 }, { x: 344, y: 116 } ];
 </script>
 
 <style scoped>
@@ -688,4 +744,30 @@ const musicDots = Array.from({ length: 4 }, (_, i) => ({
 .pr-bighray { stroke: rgba(255,180,80,.8); stroke-width: 3; stroke-linecap: round; x2: 232; }
 .pr-burst { animation: burstSpin 40s linear infinite; transform-origin: 200px 86px; }
 @keyframes burstSpin { to { transform: rotate(360deg); } }
+
+.pr-bf-wing { fill: #f78fb3; }
+.pr-bf-wing.w2 { fill: #f8a5c2; }
+.pr-butterfly.bf1 { animation: flutter 7s ease-in-out infinite; }
+.pr-butterfly.bf2 { animation: flutter 9s ease-in-out infinite; animation-delay: -4s; }
+
+.pr-fpetal { fill: #ff9db1; }
+.pr-fheart { fill: #ffd166; }
+.pr-flower-g { animation: sway 3.4s infinite alternate; transform-origin: center; }
+.pr-flower-g:nth-child(2n) { animation-delay: .8s; }
+
+.pr-bird-body { fill: #ffd166; }
+.pr-bird-beak { fill: #e8835e; }
+.pr-bird-tail { stroke: #e8a94a; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.pr-bird.b1 { animation: birdFly 20s linear infinite; }
+.pr-bird.b2 { animation: birdFly 26s linear infinite; animation-delay: -10s; }
+@keyframes birdFly { from { transform: translate(-40px, 70px); } to { transform: translate(430px, 46px); } }
+
+.pr-wstem { stroke: #6fae58; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.pr-wleaf { fill: #7fc06a; }
+.pr-wbranch { animation: sway 4s ease-in-out infinite alternate; transform-origin: top center; }
+
+.pr-wavebig { stroke: rgba(255,255,255,.85); stroke-width: 3; fill: none; stroke-linecap: round; animation: waveShift 3.2s ease-in-out infinite; }
+.pr-wavebig.w2 { animation-delay: .6s; }
+.pr-wavebig.w3 { animation-delay: 1.2s; }
+@keyframes waveShift { 0%,100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
 </style>
