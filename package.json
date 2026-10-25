@@ -11,6 +11,7 @@
     "gen:icons": "node scripts/gen-icons.mjs"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
     "@capacitor/browser": "^8.0.5",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
