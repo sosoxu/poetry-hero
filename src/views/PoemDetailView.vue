@@ -20,7 +20,7 @@
     <!-- 诗文 -->
     <div class="card poem-card">
       <div class="py-toggle" @click="showPy = !showPy">{{ showPy ? '隐藏拼音' : '显示拼音' }} 🈶</div>
-      <button class="speak-icon" :class="{ on: speaking }" v-if="ttsSupported" @click="speaking ? stopSpeak() : startSpeak()" :aria-label="speaking ? '停止朗读' : '朗读古诗'">{{ speaking ? '⏹' : '▶' }}</button>
+      <button class="speak-icon" :class="{ on: speaking }" v-if="ttsSupported" @click="speaking ? stopSpeak() : startSpeak()" :aria-label="speaking ? '停止朗读' : '朗读古诗'">{{ speaking ? '📢' : '🔊' }}</button>
       <div class="poem-lines">
         <span class="ln" :class="{ speaking: speakingIdx === i }" v-for="(l, i) in poem.lines" :key="i">
           <span class="py" v-if="showPy && poem.pinyin && poem.pinyin[i]">{{ poem.pinyin[i] }}</span>{{ l }}
@@ -335,17 +335,17 @@ async function openExternal(url) {
 .detail .scene-wrap { margin: 0 -14px; }
 .poem-card { position: relative; }
 .speak-icon {
-  position: absolute; top: 12px; left: 12px; z-index: 2;
-  width: 38px; height: 38px; border-radius: 50%; border: none;
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid #eadfd2; background: #fff;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px; color: #fff; cursor: pointer;
-  background: linear-gradient(135deg, #3a7bd5, #6ea8ff);
-  box-shadow: 0 4px 12px rgba(58, 123, 213, .4);
-  transition: transform .12s;
+  font-size: 13px; cursor: pointer; line-height: 1;
+  box-shadow: 0 2px 6px rgba(61, 43, 31, .12);
+  transition: transform .12s, background .2s;
 }
-.speak-icon:active { transform: scale(.9); }
-.speak-icon.on { background: linear-gradient(135deg, #d93425, #ff6f61); animation: speakPulse 1.4s ease-in-out infinite; }
-@keyframes speakPulse { 0%,100% { box-shadow: 0 4px 12px rgba(217, 52, 37, .4); } 50% { box-shadow: 0 4px 18px rgba(217, 52, 37, .75); } }
+.speak-icon:active { transform: scale(.88); }
+.speak-icon.on { background: #fff3e9; border-color: #ffb27d; animation: soundWave 1.2s ease-in-out infinite; }
+@keyframes soundWave { 0%,100% { box-shadow: 0 2px 6px rgba(232, 84, 31, .15); } 50% { box-shadow: 0 2px 10px rgba(232, 84, 31, .5); } }
 .poem-lines .ln.speaking { background: #fff3d6; border-radius: 10px; box-shadow: inset 0 0 0 2px #f5a623; }
 .py-toggle { position: absolute; top: 10px; right: 12px; font-size: 12px; color: var(--ink-soft); cursor: pointer; font-weight: 700; }
 .recite-head { font-weight: 800; margin-bottom: 10px; }
