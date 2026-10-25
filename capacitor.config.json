@@ -1,0 +1,12 @@
+{
+  "appId": "com.family.poetryhero",
+  "appName": "背诗小状元",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "poetry-hero",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "gen:pinyin": "node scripts/gen-pinyin.mjs",
+    "gen:icons": "node scripts/gen-icons.mjs"
+  },
+  "dependencies": {
+    "@capacitor/browser": "^8.0.5",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@napi-rs/canvas": "^0.1.65",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "pdfjs-dist": "4.10.38",
+    "pinyin-pro": "^3.26.0",
+    "vite": "^6.2.0"
+  }
+}
