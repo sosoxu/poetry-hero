@@ -138,6 +138,7 @@ import CollapsePanel from '../components/CollapsePanel.vue';
 import ReciteOverlay from '../components/ReciteOverlay.vue';
 import Confetti from '../components/Confetti.vue';
 import { sfx } from '../utils/sfx.js';
+import { isNative as isNativeApp, speakSupported, nativeSpeakLine, nativeStop } from '../utils/speak.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -180,21 +181,23 @@ function markAllDead() {
   sfx.tap();
 }
 
-// ---- 朗读功能（Web Speech API，逐句高亮） ----
-const ttsSupported = 'speechSynthesis' in window;
+// ---- 朗读功能（安卓原生TTS / 网页Web Speech，逐句高亮） ----
+const ttsSupported = speakSupported();
+const nativeMode = isNativeApp();
 const speaking = ref(false);
 const speakingIdx = ref(-1);
 const speakSlow = computed(() => (state.settings && state.settings.speakRate) !== 'normal');
 let zhVoice = null;
 function pickVoice() {
-  if (!ttsSupported) return;
+  if (!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
   zhVoice = voices.find(v => v.lang === 'zh-CN') || voices.find(v => /zh/i.test(v.lang)) || null;
 }
-if (ttsSupported) {
+if (!nativeMode && 'speechSynthesis' in window) {
   pickVoice();
   speechSynthesis.onvoiceschanged = pickVoice;
 }
+// 网页引擎：逐句
 function speakNext() {
   if (!speaking.value) return;
   const i = speakingIdx.value + 1;
@@ -210,22 +213,42 @@ function speakNext() {
   u.onerror = () => { if (speaking.value) speakNext(); };
   speechSynthesis.speak(u);
 }
+// 原生引擎：逐行 await（每行读完 resolve，期间检查停止标记）
+async function speakAllNative() {
+  const rate = speakSlow.value ? 0.75 : 1.0;
+  for (let i = 0; i < poem.value.lines.length; i++) {
+    if (!speaking.value) return;
+    speakingIdx.value = i;
+    try {
+      await nativeSpeakLine(poem.value.lines[i], rate);
+    } catch (e) {
+      alert('朗读失败：请在手机 设置→更多设置→语言与输入法→文字转语音 中开启并安装中文语音引擎');
+      break;
+    }
+  }
+  if (speaking.value) stopSpeak();
+}
 function startSpeak() {
   if (!ttsSupported) return;
-  speechSynthesis.cancel();
   speaking.value = true;
   speakingIdx.value = -1;
   sfx.tap();
-  speakNext();
+  if (nativeMode) {
+    speakAllNative();
+  } else {
+    speechSynthesis.cancel();
+    speakNext();
+  }
 }
 function stopSpeak() {
   speaking.value = false;
   speakingIdx.value = -1;
-  if (ttsSupported) speechSynthesis.cancel();
+  if (nativeMode) nativeStop();
+  else if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
 
 // 打开诗页时后台体检（仅APK自动检测；网页端点"看不了"手动触发）
-onUnmounted(() => { if (ttsSupported) speechSynthesis.cancel(); });
+onUnmounted(() => { if (nativeMode) nativeStop(); else if ('speechSynthesis' in window) speechSynthesis.cancel(); });
 
 onMounted(() => {
   if (canAutoCheck() && poem.value) {
