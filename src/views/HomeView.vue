@@ -3,8 +3,8 @@
     <!-- 问候 + 等级 -->
     <div class="hello">
       <div class="avatar">
-        <img v-if="avatarBeast" :src="beastDataUri(avatarBeast)" :alt="avatarBeast.name" />
-        <template v-else>{{ profile.avatar }}</template>
+        <img v-if="avatarBeast && !avatarImgFail" :src="beastDataUri(avatarBeast)" :alt="avatarBeast.name" @error="avatarImgFail = true" />
+        <template v-else>{{ (avatarBeast && avatarBeast.emoji) || profile.avatar }}</template>
       </div>
       <div class="hello-txt">
         <div class="hi">{{ greeting }}，{{ profile.name }}！</div>
@@ -65,12 +65,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { state, statsOf, levelOf, currentStreak, dayKey, allPoems } from '../store/index.js';
 import { beastById, beastDataUri } from '../data/beasts.js';
 
 const profile = state.profile;
 const avatarBeast = computed(() => beastById(profile.avatar));
+const avatarImgFail = ref(false);
 const lv = computed(() => levelOf(profile.totalPoints));
 const lvPercent = computed(() => {
   if (!lv.value.next) return 100;

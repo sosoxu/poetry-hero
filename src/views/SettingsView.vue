@@ -9,7 +9,8 @@
       <div class="field"><label>头像（山海经异兽）</label>
         <div class="avatars">
           <button v-for="b in BEASTS" :key="b.id" class="avatar-btn" :class="{ on: profile.avatar === b.id }" @click="pickBeast(b)">
-            <img :src="beastDataUri(b)" :alt="b.name" />
+            <img v-if="!imgFails.has(b.id)" :src="beastDataUri(b)" :alt="b.name" @error="imgFails.add(b.id)" />
+            <span v-else class="avatar-emoji">{{ b.emoji }}</span>
             <span class="avatar-name">{{ b.name }}</span>
           </button>
         </div>
@@ -71,13 +72,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { state, exportData, importData, allPoems, biliUrlsOf } from '../store/index.js';
 import { fullCheck, canAutoCheck } from '../utils/videoCheck.js';
 import { BEASTS, beastById, beastDataUri } from '../data/beasts.js';
 import { sfx } from '../utils/sfx.js';
 
 const currentBeast = ref(beastById(state.profile.avatar));
+const imgFails = reactive(new Set());
 function pickBeast(b) {
   state.profile.avatar = b.id;
   currentBeast.value = b;
@@ -180,6 +182,7 @@ function clearRecords() {
 .avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .avatar-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 6px; border: 2px solid #eadfd2; border-radius: 14px; background: #fff; cursor: pointer; }
 .avatar-btn img { width: 46px; height: 46px; border-radius: 50%; }
+.avatar-emoji { font-size: 34px; line-height: 46px; width: 46px; height: 46px; }
 .avatar-btn .avatar-name { font-size: 11px; color: var(--ink-soft); font-weight: 700; }
 .avatar-btn.on { border-color: var(--primary); background: #fff3e9; }
 .avatar-btn.on .avatar-name { color: var(--primary); }

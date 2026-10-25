@@ -1,6 +1,7 @@
 // 山海经异兽头像（卡通SVG）与趣味介绍
 const B = (id, name, desc, body) => ({
-  id, name, desc,
+  id, name, desc, emoji: ({baize:'🦄',jiuweihu:'🦊',qilin:'🐉',fenghuang:'🦚',kunpeng:'🐋',bifang:'🔥',taotie:'🐲',xiezhi:'🐐',suanni:'🦁',chongming:'🐦',zhulong:'🐲',tiangou:'🐕'})[id] || '🐾',
+  img: './avatars/' + id + '.png',
   svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">${body}</svg>`
 });
 
@@ -156,5 +157,5 @@ export const BEASTS = [
 export const beastById = (id) => BEASTS.find(b => b.id === id) || null;
 
 export function beastDataUri(b) {
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(b.svg);
+  return b.img; // AI 生成头像；加载失败时组件用 emoji 兜底
 }
