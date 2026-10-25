@@ -66,7 +66,7 @@
       </div>
       <p class="enrich" v-else>还没有资料，点右上角 ✏️ 补充吧</p>
     </CollapsePanel>
-    <CollapsePanel title="视频讲解" icon="🎬" v-if="poem.videos && poem.videos.length">
+    <CollapsePanel title="视频讲解" icon="🎬" v-if="allVideos.length">
       <!-- 有效的B站内嵌视频 -->
       <div v-for="(v, i) in aliveBili" :key="'b' + i" class="video-item">
         <div class="v-title">▶ {{ v.title }}</div>
@@ -153,7 +153,12 @@ const imgError = ref(false);
 // ---- 视频有效性 ----
 const isBili = (u) => /bilibili\.com\/video\/BV\w+/.test(u);
 
-const allVideos = computed(() => (poem.value && poem.value.videos) || []);
+const allVideos = computed(() => {
+  const vs = (poem.value && poem.value.videos) || [];
+  if (vs.length) return vs;
+  // 旧数据兜底：无视频时动态生成搜索入口，保证每首诗都有视频讲解
+  return poem.value ? searchLinks(poem.value) : [];
+});
 const biliVideos = computed(() => allVideos.value.filter(v => isBili(v.url)));
 const aliveBili = computed(() => biliVideos.value.filter(v => videoOk(v.url) !== false));
 const deadCount = computed(() => biliVideos.value.length - aliveBili.value.length);
