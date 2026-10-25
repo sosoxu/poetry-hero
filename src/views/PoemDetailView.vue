@@ -20,8 +20,14 @@
     <!-- 诗文 -->
     <div class="card poem-card">
       <div class="py-toggle" @click="showPy = !showPy">{{ showPy ? '隐藏拼音' : '显示拼音' }} 🈶</div>
+      <div class="speak-bar" v-if="ttsSupported">
+        <button class="btn speak-btn" :class="speaking ? 'speak-stop' : 'speak-go'" @click="speaking ? stopSpeak() : startSpeak()">
+          {{ speaking ? '⏹ 停止朗读' : '🔊 朗读古诗' }}
+        </button>
+        <button class="rate-btn" @click="speakSlow = !speakSlow" :class="{ on: speakSlow }">{{ speakSlow ? '🐢 慢速' : '🐇 正常' }}</button>
+      </div>
       <div class="poem-lines">
-        <span class="ln" v-for="(l, i) in poem.lines" :key="i">
+        <span class="ln" :class="{ speaking: speakingIdx === i }" v-for="(l, i) in poem.lines" :key="i">
           <span class="py" v-if="showPy && poem.pinyin && poem.pinyin[i]">{{ poem.pinyin[i] }}</span>{{ l }}
         </span>
       </div>
@@ -128,7 +134,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPoem, statsOf, updatePoem, deletePoem, videoOk, setVideoStatus, biliUrlsOf } from '../store/index.js';
 import { silentCheck, canAutoCheck } from '../utils/videoCheck.js';
@@ -174,7 +180,53 @@ function markAllDead() {
   sfx.tap();
 }
 
+// ---- 朗读功能（Web Speech API，逐句高亮） ----
+const ttsSupported = 'speechSynthesis' in window;
+const speaking = ref(false);
+const speakingIdx = ref(-1);
+const speakSlow = ref(true);
+let zhVoice = null;
+function pickVoice() {
+  if (!ttsSupported) return;
+  const voices = speechSynthesis.getVoices();
+  zhVoice = voices.find(v => v.lang === 'zh-CN') || voices.find(v => /zh/i.test(v.lang)) || null;
+}
+if (ttsSupported) {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+function speakNext() {
+  if (!speaking.value) return;
+  const i = speakingIdx.value + 1;
+  if (i >= poem.value.lines.length) { stopSpeak(); return; }
+  speakingIdx.value = i;
+  const text = poem.value.lines[i];
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  if (zhVoice) u.voice = zhVoice;
+  u.rate = speakSlow.value ? 0.7 : 0.95;
+  u.pitch = 1.05;
+  u.onend = () => { if (speaking.value) speakNext(); };
+  u.onerror = () => { if (speaking.value) speakNext(); };
+  speechSynthesis.speak(u);
+}
+function startSpeak() {
+  if (!ttsSupported) return;
+  speechSynthesis.cancel();
+  speaking.value = true;
+  speakingIdx.value = -1;
+  sfx.tap();
+  speakNext();
+}
+function stopSpeak() {
+  speaking.value = false;
+  speakingIdx.value = -1;
+  if (ttsSupported) speechSynthesis.cancel();
+}
+
 // 打开诗页时后台体检（仅APK自动检测；网页端点"看不了"手动触发）
+onUnmounted(() => { if (ttsSupported) speechSynthesis.cancel(); });
+
 onMounted(() => {
   if (canAutoCheck() && poem.value) {
     silentCheck(biliUrlsOf(poem.value));
@@ -287,6 +339,13 @@ async function openExternal(url) {
 .detail { padding-left: 14px; padding-right: 14px; }
 .detail .scene-wrap { margin: 0 -14px; }
 .poem-card { position: relative; }
+.speak-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
+.speak-btn { padding: 9px 20px; font-size: 15px; border: none; border-radius: 999px; color: #fff; font-weight: 800; cursor: pointer; }
+.speak-go { background: linear-gradient(135deg, #3a7bd5, #6ea8ff); box-shadow: 0 5px 14px rgba(58, 123, 213, .35); }
+.speak-stop { background: linear-gradient(135deg, #d93425, #ff6f61); box-shadow: 0 5px 14px rgba(217, 52, 37, .35); }
+.rate-btn { border: 2px solid #eadfd2; background: #fff; border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 700; color: var(--ink-soft); cursor: pointer; }
+.rate-btn.on { border-color: #3a7bd5; color: #3a7bd5; }
+.poem-lines .ln.speaking { background: #fff3d6; border-radius: 10px; box-shadow: inset 0 0 0 2px #f5a623; }
 .py-toggle { position: absolute; top: 10px; right: 12px; font-size: 12px; color: var(--ink-soft); cursor: pointer; font-weight: 700; }
 .recite-head { font-weight: 800; margin-bottom: 10px; }
 .recite-stats { display: flex; gap: 6px; margin-bottom: 8px; }
