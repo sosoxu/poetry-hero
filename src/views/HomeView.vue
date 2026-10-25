@@ -2,7 +2,10 @@
   <div class="page">
     <!-- 问候 + 等级 -->
     <div class="hello">
-      <div class="avatar">{{ profile.avatar }}</div>
+      <div class="avatar">
+        <img v-if="avatarBeast" :src="beastDataUri(avatarBeast)" :alt="avatarBeast.name" />
+        <template v-else>{{ profile.avatar }}</template>
+      </div>
       <div class="hello-txt">
         <div class="hi">{{ greeting }}，{{ profile.name }}！</div>
         <div class="lv">{{ lv.level.icon }} {{ lv.level.name }}
@@ -64,8 +67,10 @@
 <script setup>
 import { computed } from 'vue';
 import { state, statsOf, levelOf, currentStreak, dayKey, allPoems } from '../store/index.js';
+import { beastById, beastDataUri } from '../data/beasts.js';
 
 const profile = state.profile;
+const avatarBeast = computed(() => beastById(profile.avatar));
 const lv = computed(() => levelOf(profile.totalPoints));
 const lvPercent = computed(() => {
   if (!lv.value.next) return 100;
@@ -98,7 +103,8 @@ const recommend = computed(() => {
 
 <style scoped>
 .hello { display: flex; align-items: center; gap: 12px; margin: 10px 2px 10px; }
-.avatar { font-size: 44px; background: #fff; border-radius: 50%; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); }
+.avatar { font-size: 44px; background: #fff; border-radius: 50%; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); overflow: hidden; }
+.avatar img { width: 100%; height: 100%; }
 .hi { font-size: 19px; font-weight: 800; }
 .lv { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
 .points-chip { margin-left: auto; background: #fff3d6; color: #b8860b; font-weight: 800; border-radius: 999px; padding: 7px 13px; font-size: 14px; }

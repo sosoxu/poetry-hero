@@ -6,10 +6,14 @@
     <div class="card">
       <div class="sec-title">👧 孩子信息</div>
       <div class="field"><label>昵称</label><input v-model="profile.name" /></div>
-      <div class="field"><label>头像</label>
+      <div class="field"><label>头像（山海经异兽）</label>
         <div class="avatars">
-          <button v-for="a in avatars" :key="a" class="avatar-btn" :class="{ on: profile.avatar === a }" @click="profile.avatar = a">{{ a }}</button>
+          <button v-for="b in BEASTS" :key="b.id" class="avatar-btn" :class="{ on: profile.avatar === b.id }" @click="pickBeast(b)">
+            <img :src="beastDataUri(b)" :alt="b.name" />
+            <span class="avatar-name">{{ b.name }}</span>
+          </button>
         </div>
+        <div class="beast-desc" v-if="currentBeast">✨ <b>{{ currentBeast.name }}</b>：{{ currentBeast.desc }}</div>
       </div>
     </div>
 
@@ -70,7 +74,15 @@
 import { ref, computed } from 'vue';
 import { state, exportData, importData, allPoems, biliUrlsOf } from '../store/index.js';
 import { fullCheck, canAutoCheck } from '../utils/videoCheck.js';
+import { BEASTS, beastById, beastDataUri } from '../data/beasts.js';
 import { sfx } from '../utils/sfx.js';
+
+const currentBeast = ref(beastById(state.profile.avatar));
+function pickBeast(b) {
+  state.profile.avatar = b.id;
+  currentBeast.value = b;
+  sfx.tap();
+}
 
 const checking = ref(false);
 const checkDone = ref(0);
@@ -113,7 +125,7 @@ const userPoems = computed(() => state.userPoems);
 const fileInput = ref(null);
 const lastExport = ref('');
 
-const avatars = ['🐼', '🐯', '🐰', '🦊', '🐵', '🐸', '🐨', '🦁', '🐔', '🦄'];
+const avatars = []; // 已改用山海经异兽头像（BEASTS）
 
 function doExport() {
   const blob = new Blob([exportData()], { type: 'application/json' });
@@ -165,9 +177,14 @@ function clearRecords() {
 .sec-title { font-weight: 800; margin-bottom: 12px; }
 .sec-title.danger { color: #c0504d; }
 .tip { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin: 0 0 12px; }
-.avatars { display: flex; flex-wrap: wrap; gap: 8px; }
-.avatar-btn { width: 46px; height: 46px; font-size: 26px; border: 2px solid #eadfd2; border-radius: 14px; background: #fff; cursor: pointer; }
+.avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.avatar-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 6px; border: 2px solid #eadfd2; border-radius: 14px; background: #fff; cursor: pointer; }
+.avatar-btn img { width: 46px; height: 46px; border-radius: 50%; }
+.avatar-btn .avatar-name { font-size: 11px; color: var(--ink-soft); font-weight: 700; }
 .avatar-btn.on { border-color: var(--primary); background: #fff3e9; }
+.avatar-btn.on .avatar-name { color: var(--primary); }
+.beast-desc { font-size: 13px; color: var(--ink-soft); background: #faf5ec; border-radius: 10px; padding: 9px 12px; margin-top: 10px; line-height: 1.7; }
+.beast-desc b { color: var(--primary); }
 .poem-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px dashed #eee2d0; font-weight: 700; cursor: pointer; }
 .poem-row:last-child { border-bottom: none; }
 .pr-author { color: var(--ink-soft); font-weight: 400; font-size: 13px; }
