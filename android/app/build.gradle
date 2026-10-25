@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+// 版本号唯一来源：package.json（与设置页显示版本保持一致）
+def pkgJson = new groovy.json.JsonSlurper().parseText(file('../../package.json').text)
+def appVerName = pkgJson.version
+def (appMaj, appMin, appPat) = appVerName.split('\\.').collect { it.toInteger() }
+def appVerCode = appMaj * 10000 + appMin * 100 + appPat
+
 android {
     namespace = "com.family.poetryhero"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +13,8 @@ android {
         applicationId "com.family.poetryhero"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "2.4"
+        versionCode appVerCode
+        versionName appVerName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

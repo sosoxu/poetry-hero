@@ -67,7 +67,7 @@
       <button class="btn btn-ghost btn-sm danger-btn" @click="clearRecords">清空全部背诵记录</button>
     </div>
 
-    <div class="about">背诗小状元 v1.0 · 专为爱背诗的孩子制作 💌</div>
+    <div class="about">背诗小状元 v{{ appVersion }} · 专为爱背诗的孩子制作 💌</div>
   </div>
 </template>
 
@@ -76,8 +76,10 @@ import { ref, computed, reactive } from 'vue';
 import { state, exportData, importData, allPoems, biliUrlsOf } from '../store/index.js';
 import { fullCheck, canAutoCheck } from '../utils/videoCheck.js';
 import { BEASTS, beastById, beastDataUri } from '../data/beasts.js';
+import pkg from '../../package.json';
 import { sfx } from '../utils/sfx.js';
 
+const appVersion = pkg.version.split('.').slice(0, 2).join('.');
 const currentBeast = ref(beastById(state.profile.avatar));
 const imgFails = reactive(new Set());
 function pickBeast(b) {
