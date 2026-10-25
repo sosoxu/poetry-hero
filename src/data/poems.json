@@ -198,6 +198,10 @@
   ],
   "videos": [
    {
+    "title": "爱上古诗·动画讲解",
+    "url": "https://www.bilibili.com/video/BV1wh41177Hi?p=71"
+   },
+   {
     "title": "🔍 B站搜索讲解视频",
     "url": "https://search.bilibili.com/all?keyword=%E6%9C%9B%E5%B2%B3%20%E6%9D%9C%E7%94%AB%20%E5%8F%A4%E8%AF%97%E8%AE%B2%E8%A7%A3",
     "external": true
@@ -3063,6 +3067,11 @@
    {
     "title": "🔍 B站搜索讲解视频",
     "url": "https://search.bilibili.com/all?keyword=%E7%A7%8B%E6%B5%A6%E6%AD%8C%20%E6%9D%8E%E7%99%BD%20%E5%8F%A4%E8%AF%97%E8%AE%B2%E8%A7%A3",
+    "external": true
+   },
+   {
+    "title": "🎵 抖音搜索讲解视频",
+    "url": "https://www.douyin.com/search/%E7%A7%8B%E6%B5%A6%E6%AD%8C%20%E6%9D%8E%E7%99%BD%20%E5%8F%A4%E8%AF%97",
     "external": true
    }
   ]

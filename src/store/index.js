@@ -314,7 +314,7 @@ export function knowledgeToPoemFields(match) {
     authorIntro: d.authorIntro || '',
     words: (d.words || []).map(w => ({ ...w })),
     lineNotes: match.linesMatched ? (d.lineNotes || []).map(n => ({ ...n })) : [],
-    videos: makeSearchVideos(d.title, d.author)
+    videos: (d.videos && d.videos.length) ? d.videos.map(v => ({ ...v })) : makeSearchVideos(d.title, d.author)
   };
 }
 export function addCustomPoem(p) {
