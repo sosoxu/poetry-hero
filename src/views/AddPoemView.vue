@@ -59,7 +59,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { addCustomPoem } from '../store/index.js';
+import { addCustomPoem, matchPoemKnowledge, knowledgeToPoemFields, makeSearchVideos } from '../store/index.js';
 import { sfx } from '../utils/sfx.js';
 
 const router = useRouter();
@@ -68,6 +68,7 @@ const raw = ref('');
 const url = ref('');
 const fetching = ref(false);
 const parsed = ref(null);
+const autoFilled = ref(false);
 
 const themes = ['mountain', 'river', 'moon', 'snow', 'plum', 'spring', 'autumn', 'border', 'farewell', 'child', 'rain', 'bamboo'];
 const themeNames = {
@@ -161,14 +162,24 @@ async function fetchUrl() {
 const finalLines = computed(() => splitLines(parsed.value?.linesText || ''));
 
 function save() {
+  // 自动匹配知识库：内置诗库 / 课本知识库
+  const match = matchPoemKnowledge(parsed.value.title.trim(), parsed.value.author.trim(), finalLines.value);
+  const fields = match ? knowledgeToPoemFields(match) : { theme: parsed.value.theme, background: '', meaning: '', authorIntro: '', words: [], lineNotes: [], videos: makeSearchVideos(parsed.value.title.trim(), parsed.value.author.trim()) };
+  if (match) fields.theme = parsed.value.theme; // 用户手选场景优先
   const poem = addCustomPoem({
     title: parsed.value.title.trim(),
     dynasty: parsed.value.dynasty.trim(),
     author: parsed.value.author.trim(),
     lines: finalLines.value,
-    theme: parsed.value.theme,
-    background: '', meaning: '', authorIntro: '', words: []
+    theme: fields.theme,
+    background: fields.background,
+    meaning: fields.meaning,
+    authorIntro: fields.authorIntro,
+    words: fields.words,
+    lineNotes: fields.lineNotes || [],
+    videos: fields.videos || []
   });
+  autoFilled.value = !!match && (!!fields.background || !!fields.meaning);
   sfx.pass();
   router.replace('/poem/' + poem.id);
 }

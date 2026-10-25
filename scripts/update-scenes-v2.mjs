@@ -98,6 +98,9 @@ const map = {
   'songyouren-xuetao': ['moonbeam', 'windlines'], // 水国蒹葭夜有霜
   'guyi-liqi': ['horse', 'musicnotes'],        // 赌胜马蹄下 / 惯弹琵琶
   'zaohan-jiangshang': ['geeseV', 'ferry'],    // 木落雁南度 / 孤帆天际看
+  'wanbo-xunyang': ['bell', 'cloudsea'],       // 日暮空闻钟 / 始见香炉峰
+  'deng-yanzhouchenglou': ['cloudsea'],        // 浮云连海岱
+  'wuti-yibai-98': ['hut'],                    // 江边村事忙 / 故溪黄稻熟
 };
 
 // 新道具补充：butterfly蝴蝶 flower花朵 bird黄莺 willowrain柳雨 wave浪

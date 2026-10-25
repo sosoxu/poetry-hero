@@ -41,6 +41,9 @@
       <button class="btn btn-primary btn-block" @click="reciteOpen = true">🎤 开始背诵挑战</button>
     </div>
 
+    <!-- 自动生成资料标识 -->
+    <div class="autofill-badge" v-if="poem.custom && (poem.background || poem.lineNotes && poem.lineNotes.length)">✨ 资料由内置知识库自动生成，可在 ✏️ 中调整</div>
+
     <!-- 折叠资料 -->
     <div class="section-gap"></div>
     <CollapsePanel title="背景故事" icon="📜"><p class="enrich">{{ poem.backgroundRich || poem.background || '还没有资料，点右上角 ✏️ 补充吧' }}</p></CollapsePanel>
@@ -296,6 +299,7 @@ async function openExternal(url) {
 .ln-row { padding: 10px 0; border-bottom: 1px dashed #eee2d0; }
 .ln-row:last-child { border-bottom: none; }
 .ln-line { font-weight: 800; color: var(--primary); text-align: center; font-size: 16px; margin-bottom: 4px; }
+.autofill-badge { font-size: 12px; color: var(--jade); background: #e3f5ec; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; text-align: center; }
 .ln-note { color: #57493d; font-size: 14px; line-height: 1.8; }
 .word-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dashed #eee2d0; align-items: baseline; }
 .word-row:last-child { border-bottom: none; }

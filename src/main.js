@@ -5,13 +5,6 @@ import './styles/main.css';
 
 createApp(App).use(router).mount('#app');
 
-// PWA Service Worker（仅生产构建）
-if (import.meta.env.PROD && 'serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
-}
-
 // 安卓返回键守护（APK环境）：万一页面被导航到外部网站，返回键直接回到应用
 const cap = window.Capacitor;
 if (cap && cap.isNativePlatform && cap.isNativePlatform()) {

@@ -258,6 +258,65 @@ export function addQuizResult({ correct, total, bestStreak }) {
 }
 
 // ---------- 自定义诗 ----------
+import kbData from '../data/poems-kb.json';
+
+// 规范化文本用于匹配（去标点/空白/书名号/括号变体）
+function normText(s) {
+  return (s || '').replace(/[《》【】\s　·（）()、，。！？：；'']/g, '')
+    .replace('（', '').replace('）', '');
+}
+
+/**
+ * 按标题+作者匹配知识库（先匹配内置99首，再匹配知识库）
+ * @returns {{source:'builtin'|'kb', data:object, linesMatched:boolean}|null}
+ */
+export function matchPoemKnowledge(title, author, lines) {
+  const nt = normText(title);
+  const na = normText(author);
+  const myLines = lines.map(normText).join('|');
+  const myFull = lines.map(normText).join('');
+  // 优先内置诗库（内容最全，含视频与场景）
+  for (const pool of [allPoems(), kbData]) {
+    for (const p of pool) {
+      if (normText(p.title) !== nt) continue;
+      if (na && normText(p.author) !== na) continue;
+      const libLines = p.lines.map(normText).join('|');
+      const libFull = p.lines.map(normText).join('');
+      // 逐句一致，或全文一致（允许分句差异，如叠句诗）
+      const linesMatched = myLines === libLines || (myFull && myFull === libFull);
+      return {
+        source: pool === kbData ? 'kb' : 'builtin',
+        data: p,
+        linesMatched
+      };
+    }
+  }
+  return null;
+}
+
+// 生成B站/抖音搜索直达视频入口（任何诗都可用）
+export function makeSearchVideos(title, author) {
+  const kw = encodeURIComponent((title + ' ' + (author || '')).trim() + ' 古诗讲解');
+  const kwDy = encodeURIComponent((title + ' '.trim() + (author || '')).trim() + ' 古诗');
+  return [
+    { title: '🔍 B站搜索讲解视频', url: 'https://search.bilibili.com/all?keyword=' + kw, external: true },
+    { title: '🎵 抖音搜索讲解视频', url: 'https://www.douyin.com/search/' + kwDy, external: true }
+  ];
+}
+
+// 从匹配结果提取可复用的资料
+export function knowledgeToPoemFields(match) {
+  const d = match.data;
+  return {
+    theme: d.theme || 'spring',
+    background: d.background || '',
+    meaning: d.meaning || '',
+    authorIntro: d.authorIntro || '',
+    words: (d.words || []).map(w => ({ ...w })),
+    lineNotes: match.linesMatched ? (d.lineNotes || []).map(n => ({ ...n })) : [],
+    videos: makeSearchVideos(d.title, d.author)
+  };
+}
 export function addCustomPoem(p) {
   const id = 'u' + Date.now();
   const poem = {
@@ -265,6 +324,7 @@ export function addCustomPoem(p) {
     lines: p.lines, theme: p.theme || 'auto', custom: true,
     background: p.background || '', meaning: p.meaning || '',
     authorIntro: p.authorIntro || '', words: p.words || [],
+    lineNotes: p.lineNotes || [],
     videos: p.videos || [], customImage: p.customImage || ''
   };
   state.userPoems.push(poem);

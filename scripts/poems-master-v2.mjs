@@ -124,5 +124,9 @@ export const poems = [
   // P28
   { id: 'songyouren-xuetao', title: '送友人', dynasty: '唐', author: '薛涛', theme: 'farewell', lines: ['水国蒹葭夜有霜，', '月寒山色共苍苍。', '谁言千里自今夕，', '离梦杳如关塞长。'] },
   { id: 'guyi-liqi', title: '古意', dynasty: '唐', author: '李颀', theme: 'border', lines: ['男儿事长征，', '少小幽燕客。', '赌胜马蹄下，', '由来轻七尺。', '杀人莫敢前，', '须如猬毛磔。', '黄云陇底白云飞，', '未得报恩不能归。', '辽东小妇年十五，', '惯弹琵琶解歌舞。', '今为羌笛出塞声，', '使我三军泪如雨。'] },
-  { id: 'zaohan-jiangshang', title: '早寒江上有怀', dynasty: '唐', author: '孟浩然', theme: 'river', lines: ['木落雁南度，', '北风江上寒。', '我家襄水曲，', '遥隔楚云端。', '乡泪客中尽，', '孤帆天际看。', '迷津欲有问，', '平海夕漫漫。'] }
+  { id: 'zaohan-jiangshang', title: '早寒江上有怀', dynasty: '唐', author: '孟浩然', theme: 'river', lines: ['木落雁南度，', '北风江上寒。', '我家襄水曲，', '遥隔楚云端。', '乡泪客中尽，', '孤帆天际看。', '迷津欲有问，', '平海夕漫漫。'] },
+  // P29（原书129页，此前误判为封底漏掉，经考级表对照补入）
+  { id: 'wanbo-xunyang', title: '晚泊浔阳望庐山', dynasty: '唐', author: '孟浩然', theme: 'mountain', lines: ['挂席几千里，', '名山都未逢。', '泊舟浔阳郭，', '始见香炉峰。', '尝读远公传，', '永怀尘外踪。', '东林精舍近，', '日暮空闻钟。'] },
+  { id: 'deng-yanzhouchenglou', title: '登兖州城楼', dynasty: '唐', author: '杜甫', theme: 'mountain', lines: ['东郡趋庭日，', '南楼纵目初。', '浮云连海岱，', '平野入青徐。', '孤嶂秦碑在，', '荒城鲁殿余。', '从来多古意，', '临眺独踌躇。'] },
+  { id: 'wuti-yibai-98', title: '无题一百首·其九十八', dynasty: '唐', author: '钱珝', theme: 'autumn', lines: ['万木已清霜，', '江边村事忙。', '故溪黄稻熟，', '一夜梦中香。'] }
 ];

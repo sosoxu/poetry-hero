@@ -6,7 +6,7 @@ import { pinyin } from 'pinyin-pro';
 const require = createRequire(import.meta.url);
 const { poems } = await import('./poems-master-v2.mjs');
 
-const batches = [1, 2, 3, 4, 5, 6].map(i => `scripts/enrich3/batch${i}.json`);
+const batches = [1, 2, 3, 4, 5, 6, 7].map(i => `scripts/enrich3/batch${i}.json`);
 const enrich = {};
 const missing = [];
 for (const f of batches) {
