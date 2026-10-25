@@ -1,5 +1,6 @@
 package com.family.poetryhero;
 
+import android.os.Bundle;
 import android.webkit.WebView;
 
 import com.getcapacitor.BridgeActivity;
@@ -7,6 +8,12 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
   private static final String APP_ORIGIN = "https://localhost";
   private String appHome = APP_ORIGIN + "/";
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    registerPlugin(AppLauncherPlugin.class);
+  }
 
   @Override
   public void onResume() {

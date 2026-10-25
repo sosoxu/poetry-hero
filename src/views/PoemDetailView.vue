@@ -139,6 +139,7 @@ import ReciteOverlay from '../components/ReciteOverlay.vue';
 import Confetti from '../components/Confetti.vue';
 import { sfx } from '../utils/sfx.js';
 import { isNative as isNativeApp, speakSupported, nativeSpeakLine, nativeStop } from '../utils/speak.js';
+import { launchExternal } from '../utils/launcher.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -322,24 +323,7 @@ function biliEmbed(u) {
 }
 async function openExternal(url) {
   sfx.tap();
-  const cap = window.Capacitor;
-  if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
-    // 原生环境：一律用系统浏览器（Custom Tab，带关闭按钮，不会顶掉应用界面）
-    // 优先用 Capacitor 原生插件代理（不依赖打包的动态import）
-    try {
-      await cap.Plugins.Browser.open({ url, toolbarColor: '#e8541f' });
-      return;
-    } catch (e) { /* 尝试下一种方式 */ }
-    try {
-      const { Browser } = await import('@capacitor/browser');
-      await Browser.open({ url, toolbarColor: '#e8541f' });
-      return;
-    } catch (e) { /* 仍失败则提示，绝不在WebView内导航 */ }
-    alert('打开外部页面失败，请稍后再试');
-    return;
-  }
-  // 网页环境
-  window.open(url, '_blank');
+  await launchExternal(url);
 }
 </script>
 

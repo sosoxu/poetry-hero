@@ -1,3 +1,4 @@
+import { launchExternal } from './utils/launcher.js';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router/index.js';
@@ -9,14 +10,7 @@ createApp(App).use(router).mount('#app');
 const capGlobal = window.Capacitor;
 if (capGlobal && capGlobal.isNativePlatform && capGlobal.isNativePlatform()) {
   async function openInCustomTab(url) {
-    try {
-      await capGlobal.Plugins.Browser.open({ url, toolbarColor: '#e8541f' });
-    } catch (e) {
-      try {
-        const { Browser } = await import('@capacitor/browser');
-        await Browser.open({ url, toolbarColor: '#e8541f' });
-      } catch (e2) { /* 放弃，绝不导航 */ }
-    }
+    launchExternal(url);
   }
   window.open = function (url) { if (url) openInCustomTab(String(url)); return null; };
   document.addEventListener('click', (ev) => {
