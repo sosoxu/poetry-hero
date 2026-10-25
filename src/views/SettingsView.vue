@@ -67,7 +67,22 @@
       <button class="btn btn-ghost btn-sm danger-btn" @click="clearRecords">清空全部背诵记录</button>
     </div>
 
+    <!-- 联系作者 -->
+    <div class="contact-row">
+      <button class="btn btn-ghost btn-sm contact-btn" @click="showContact = true">📮 联系作者</button>
+    </div>
+
     <div class="about">背诗小状元 v{{ appVersion }} · 专为爱背诗的孩子制作 💌</div>
+
+    <!-- 联系作者弹窗 -->
+    <div class="overlay" v-if="showContact" @click.self="showContact = false">
+      <div class="sheet contact-sheet">
+        <h3 style="margin:0 0 6px">📮 联系作者</h3>
+        <p class="contact-tip">微信扫一扫，添加作者好友。<br />反馈问题、交换背诵心得都很欢迎～</p>
+        <img src="/wechat-qr.jpg" alt="微信二维码" class="qr-img" />
+        <button class="btn btn-primary btn-block" style="margin-top:14px" @click="showContact = false">关闭</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -82,6 +97,7 @@ import { sfx } from '../utils/sfx.js';
 const appVersion = pkg.version.split('.').slice(0, 2).join('.');
 const currentBeast = ref(beastById(state.profile.avatar));
 const imgFails = reactive(new Set());
+const showContact = ref(false);
 function pickBeast(b) {
   state.profile.avatar = b.id;
   currentBeast.value = b;
@@ -200,5 +216,9 @@ function clearRecords() {
 .cr-dead b { color: #c0504d; }
 .cr-dead-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
 .cr-poem { background: #fdecea; color: #c0504d; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; }
+.contact-row { text-align: center; padding: 2px 0 6px; }
+.contact-btn { color: var(--ink-soft); }
+.contact-tip { font-size: 13px; color: var(--ink-soft); line-height: 1.8; margin: 0 0 14px; }
+.qr-img { width: 100%; max-width: 300px; display: block; margin: 0 auto; border-radius: 12px; box-shadow: var(--shadow); }
 .about { text-align: center; color: #c3b6a8; font-size: 12px; padding: 10px 0 20px; }
 </style>
