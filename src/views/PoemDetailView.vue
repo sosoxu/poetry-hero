@@ -20,12 +20,7 @@
     <!-- 诗文 -->
     <div class="card poem-card">
       <div class="py-toggle" @click="showPy = !showPy">{{ showPy ? '隐藏拼音' : '显示拼音' }} 🈶</div>
-      <div class="speak-bar" v-if="ttsSupported">
-        <button class="btn speak-btn" :class="speaking ? 'speak-stop' : 'speak-go'" @click="speaking ? stopSpeak() : startSpeak()">
-          {{ speaking ? '⏹ 停止朗读' : '🔊 朗读古诗' }}
-        </button>
-        <button class="rate-btn" @click="speakSlow = !speakSlow" :class="{ on: speakSlow }">{{ speakSlow ? '🐢 慢速' : '🐇 正常' }}</button>
-      </div>
+      <button class="speak-icon" :class="{ on: speaking }" v-if="ttsSupported" @click="speaking ? stopSpeak() : startSpeak()" :aria-label="speaking ? '停止朗读' : '朗读古诗'">{{ speaking ? '⏹' : '▶' }}</button>
       <div class="poem-lines">
         <span class="ln" :class="{ speaking: speakingIdx === i }" v-for="(l, i) in poem.lines" :key="i">
           <span class="py" v-if="showPy && poem.pinyin && poem.pinyin[i]">{{ poem.pinyin[i] }}</span>{{ l }}
@@ -184,7 +179,7 @@ function markAllDead() {
 const ttsSupported = 'speechSynthesis' in window;
 const speaking = ref(false);
 const speakingIdx = ref(-1);
-const speakSlow = ref(true);
+const speakSlow = computed(() => (state.settings && state.settings.speakRate) !== 'normal');
 let zhVoice = null;
 function pickVoice() {
   if (!ttsSupported) return;
@@ -339,12 +334,18 @@ async function openExternal(url) {
 .detail { padding-left: 14px; padding-right: 14px; }
 .detail .scene-wrap { margin: 0 -14px; }
 .poem-card { position: relative; }
-.speak-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
-.speak-btn { padding: 9px 20px; font-size: 15px; border: none; border-radius: 999px; color: #fff; font-weight: 800; cursor: pointer; }
-.speak-go { background: linear-gradient(135deg, #3a7bd5, #6ea8ff); box-shadow: 0 5px 14px rgba(58, 123, 213, .35); }
-.speak-stop { background: linear-gradient(135deg, #d93425, #ff6f61); box-shadow: 0 5px 14px rgba(217, 52, 37, .35); }
-.rate-btn { border: 2px solid #eadfd2; background: #fff; border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 700; color: var(--ink-soft); cursor: pointer; }
-.rate-btn.on { border-color: #3a7bd5; color: #3a7bd5; }
+.speak-icon {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  width: 38px; height: 38px; border-radius: 50%; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #fff; cursor: pointer;
+  background: linear-gradient(135deg, #3a7bd5, #6ea8ff);
+  box-shadow: 0 4px 12px rgba(58, 123, 213, .4);
+  transition: transform .12s;
+}
+.speak-icon:active { transform: scale(.9); }
+.speak-icon.on { background: linear-gradient(135deg, #d93425, #ff6f61); animation: speakPulse 1.4s ease-in-out infinite; }
+@keyframes speakPulse { 0%,100% { box-shadow: 0 4px 12px rgba(217, 52, 37, .4); } 50% { box-shadow: 0 4px 18px rgba(217, 52, 37, .75); } }
 .poem-lines .ln.speaking { background: #fff3d6; border-radius: 10px; box-shadow: inset 0 0 0 2px #f5a623; }
 .py-toggle { position: absolute; top: 10px; right: 12px; font-size: 12px; color: var(--ink-soft); cursor: pointer; font-weight: 700; }
 .recite-head { font-weight: 800; margin-bottom: 10px; }

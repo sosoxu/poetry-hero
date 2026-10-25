@@ -39,7 +39,8 @@ function load() {
         events: d.events || [],
         videoStatus: d.videoStatus || {},      // { [url]: { ok, ts } } 视频有效性缓存
         poemOverrides: d.poemOverrides || {},   // { [poemId]: {...} } 内置诗的家长修改覆盖层
-        quiz: d.quiz || { answered: 0, correct: 0, bestStreak: 0, runs: 0, bestScore: 0 }
+        quiz: d.quiz || { answered: 0, correct: 0, bestStreak: 0, runs: 0, bestScore: 0 },
+        settings: d.settings || { speakRate: 'slow' }
       };
     }
   } catch (e) { console.warn('读取本地数据失败', e); }
@@ -47,7 +48,8 @@ function load() {
     profile: { name: '小诗人', avatar: '🐼', totalPoints: 0 },
     userPoems: [], records: [], poemStats: {}, goals: [], events: [],
     videoStatus: {}, poemOverrides: {},
-    quiz: { answered: 0, correct: 0, bestStreak: 0, runs: 0, bestScore: 0 }
+    quiz: { answered: 0, correct: 0, bestStreak: 0, runs: 0, bestScore: 0 },
+    settings: { speakRate: 'slow' }
   };
 }
 
@@ -366,4 +368,5 @@ export function importData(json) {
   state.events = d.events || [];
   state.videoStatus = d.videoStatus || {};
   state.poemOverrides = d.poemOverrides || {};
+  state.settings = d.settings || { speakRate: 'slow' };
 }
